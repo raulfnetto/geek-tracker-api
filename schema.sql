@@ -17,4 +17,4 @@ CREATE TABLE IF NOT EXISTS obras (
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-#A tabela de integração e unificação das duas obviamente foi ocultada.
+#A tabela de integração e unificação das duas obviamente foi oculta
