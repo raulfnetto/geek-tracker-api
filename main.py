@@ -45,3 +45,35 @@ def criar_usuario(usuario: UsuarioNovo):
 
     except Exception as erro:
         return {"status": "erro", "mensagem": f"Deu ruim ao criar o usuário: {erro}"} #Se der algum erro durante esse processo todo, ele vai pular pra cá e me mostrar uma mensagem de erro com o que aconteceu.
+    
+
+
+
+#Estrutura da tabela "obras" no banco de dados
+class ObraNova(BaseModel):
+    usuario_id: int
+    titulo: str
+    categoria: str
+    status: str
+    nota: int
+
+#Isso serve basicamente para criar uma nova obra no banco de dados. 
+@app.post("/obras")
+def criar_obra(obra: ObraNova):
+    try:
+        conexao = psycopg2.connect(URL_DO_BANCO)
+        cursor = conexao.cursor()
+        
+        comando = "INSERT INTO obras (usuario_id, titulo, categoria, status, nota) VALUES (%s, %s, %s, %s, %s) RETURNING id;"
+        valores = (obra.usuario_id, obra.titulo, obra.categoria, obra.status, obra.nota)
+        
+        cursor.execute(comando, valores)
+        nova_id = cursor.fetchone()[0]
+        conexao.commit()
+        
+        cursor.close()
+        conexao.close()
+        
+        return {"status": "sucesso", "mensagem": f"Obra '{obra.titulo}' salva com ID {nova_id}"}
+    except Exception as erro:
+        return {"status": "erro", "mensagem": f"Erro ao salvar a obra: {erro}"}
